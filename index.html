@@ -103,6 +103,7 @@
     <div id="win-screen">
       <h2>Happy Birthday Theo!</h2>
       <p id="win-message"></p>
+      <video id="celebration-video" width="320" height="240" style="display: none; margin: 15px auto;"></video>
       <button id="win-restart-button">Play Again</button>
     </div>
   </div>
@@ -183,6 +184,11 @@
       gameOverScreen.style.display = 'none';
       winScreen.style.display = 'none';
       startScreen.style.display = 'block';
+      
+      // Reset video
+      const video = document.getElementById('celebration-video');
+      video.pause();
+      video.style.display = 'none';
       
       // Clear intervals
       if (gameLoop) clearInterval(gameLoop);
@@ -376,6 +382,12 @@
       
       // Update win message with Theo's current age
       document.getElementById('win-message').textContent = `You are ${theosAge} today!`;
+      
+      // Play celebration video
+      const video = document.getElementById('celebration-video');
+      video.src = 'theo.mp4';
+      video.style.display = 'block';
+      video.play();
       
       winScreen.style.display = 'block';
     }
