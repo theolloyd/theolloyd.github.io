@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +13,14 @@
       overflow: hidden;
       background: linear-gradient(to bottom, #4b0082, #9370db);
     }
+
     #game-container {
       width: 100%;
       height: 100vh;
       position: relative;
       overflow: hidden;
     }
+
     #player {
       width: 80px;
       height: 80px;
@@ -30,13 +33,16 @@
       transform: translateY(-50%);
       z-index: 10;
     }
+
     .cloud {
       position: absolute;
-      background-color: #FFB7DD; /* fairy floss pink */
+      background-color: #FFB7DD;
+      /* fairy floss pink */
       border-radius: 50px;
       opacity: 0.8;
       z-index: 5;
     }
+
     .star {
       position: absolute;
       width: 30px;
@@ -45,6 +51,7 @@
       clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
       z-index: 8;
     }
+
     #score {
       position: absolute;
       top: 20px;
@@ -55,7 +62,10 @@
       z-index: 20;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
-    #game-over, #win-screen, #start-screen {
+
+    #game-over,
+    #win-screen,
+    #start-screen {
       position: absolute;
       top: 50%;
       left: 50%;
@@ -68,6 +78,7 @@
       display: none;
       z-index: 30;
     }
+
     button {
       background-color: #ff69b4;
       color: white;
@@ -78,28 +89,30 @@
       font-weight: bold;
       margin-top: 10px;
     }
+
     button:hover {
       background-color: #ff1493;
     }
   </style>
 </head>
+
 <body>
   <div id="game-container">
     <div id="player"></div>
     <div id="score">Score: 0</div>
-    
+
     <div id="start-screen">
       <h2>Theo's Flappy Adventure</h2>
       <p>Click or press Space to jump</p>
       <button id="start-button">Start Game</button>
     </div>
-    
+
     <div id="game-over">
       <h2>Game Over!</h2>
       <p>Your score: <span id="final-score">0</span></p>
       <button id="restart-button">Play Again</button>
     </div>
-    
+
     <div id="win-screen">
       <h2>Happy Birthday Theo!</h2>
       <p id="win-message"></p>
@@ -120,7 +133,7 @@
     const restartButton = document.getElementById('restart-button');
     const winRestartButton = document.getElementById('win-restart-button');
     const startButton = document.getElementById('start-button');
-    
+
     // Game variables
     let playerY = 50;
     let velocity = 0;
@@ -134,24 +147,24 @@
     let starInterval;
     let clouds = [];
     let stars = [];
-    
+
     // Calculate Theo's age (born April 6, 2009)
     const today = new Date();
     const birthDate = new Date(2009, 3, 6); // Month is 0-indexed (3 = April)
     let theosAge = today.getFullYear() - birthDate.getFullYear();
-    
+
     // Adjust age if birthday hasn't occurred yet this year
-    const hasBirthdayOccurredThisYear = 
-      today.getMonth() > birthDate.getMonth() || 
+    const hasBirthdayOccurredThisYear =
+      today.getMonth() > birthDate.getMonth() ||
       (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
-    
+
     if (!hasBirthdayOccurredThisYear) {
       theosAge--;
     }
-    
+
     // Target score is his age
     const targetScore = theosAge;
-    
+
     // Initialize game
     function initGame() {
       // Reset variables
@@ -161,74 +174,74 @@
       isGameWon = false;
       score = 0;
       scoreDisplay.textContent = 'Score: 0';
-      
+
       // Set win message and score target based on Theo's current age 
       document.getElementById('win-message').textContent = `You are ${theosAge} today!`;
       document.getElementById('score').textContent = `Score: 0/${targetScore}`;
-      
+
       // Clear clouds and stars
       clouds.forEach(cloud => {
         cloud.element.remove();
       });
       clouds = [];
-      
+
       stars.forEach(star => {
         star.element.remove();
       });
       stars = [];
-      
+
       // Reset player position
       updatePlayerPosition();
-      
+
       // Hide screens
       gameOverScreen.style.display = 'none';
       winScreen.style.display = 'none';
       startScreen.style.display = 'block';
-      
+
       // Reset video
       const video = document.getElementById('celebration-video');
       video.pause();
       video.style.display = 'none';
-      
+
       // Clear intervals
       if (gameLoop) clearInterval(gameLoop);
       if (cloudInterval) clearInterval(cloudInterval);
       if (starInterval) clearInterval(starInterval);
     }
-    
+
     // Start gameplay
     function startGameplay() {
       // Hide start screen
       startScreen.style.display = 'none';
-      
+
       // Start game loops
       gameLoop = setInterval(update, 16);
-      cloudInterval = setInterval(createCloud, 4000);  // Much less frequent clouds
-      starInterval = setInterval(createStar, 600);    // Much more frequent stars
-      
+      cloudInterval = setInterval(createCloud, 3500);
+      starInterval = setInterval(createStar, 1000);
+
       // Add an initial jump to get things moving
       velocity = jump * 0.7;
-      
+
       // Create a few initial stars to get started
       for (let i = 0; i < 5; i++) {
         createStar();
       }
     }
-    
+
     // Update game state
     function update() {
       if (isGameOver || isGameWon) return;
-      
+
       // Apply gravity
       velocity += gravity;
-      
+
       // Limit max falling speed
       if (velocity > 8) velocity = 8;
-      
+
       // Update player position
       playerY += velocity * 0.4;  // Slower movement for easier control
       updatePlayerPosition();
-      
+
       // Check boundaries
       const playerRect = player.getBoundingClientRect();
       // Bounce from top instead of ending game
@@ -236,20 +249,20 @@
         playerY = playerRect.height / window.innerHeight * 100 / 2; // Move away from edge
         velocity = Math.abs(velocity) * 0.8; // Reverse velocity and dampen it
         updatePlayerPosition();
-      } 
+      }
       // Also bounce from bottom instead of ending game
       else if (playerRect.bottom >= window.innerHeight) {
         playerY = 100 - (playerRect.height / window.innerHeight * 100) * 1.5; // Move away from bottom
         velocity = -Math.abs(velocity) * 0.8; // Reverse velocity upward and dampen it
         updatePlayerPosition();
       }
-      
+
       // Update clouds
       for (let i = clouds.length - 1; i >= 0; i--) {
         const cloud = clouds[i];
         cloud.x -= cloud.speed;
         cloud.element.style.right = `${-cloud.x}px`;
-        
+
         // Check collision
         const cloudRect = cloud.element.getBoundingClientRect();
         if (
@@ -261,20 +274,20 @@
           gameOver();
           return;
         }
-        
-        // Remove clouds that are off-screen
+
+        //Remove clouds that are off-screen
         if (cloud.x > window.innerWidth + cloud.width) {
           cloud.element.remove();
           clouds.splice(i, 1);
         }
       }
-      
+
       // Update stars
       for (let i = stars.length - 1; i >= 0; i--) {
         const star = stars[i];
         star.x -= star.speed;
         star.element.style.right = `${-star.x}px`;
-        
+
         // Check collision to collect star
         const starRect = star.element.getBoundingClientRect();
         if (
@@ -288,13 +301,13 @@
           star.element.style.display = 'none';
           score++;
           scoreDisplay.textContent = `Score: ${score}/${targetScore}`;
-          
+
           // Check win condition
           if (score >= targetScore) {  // Dynamic score based on Theo's age
             winGame();
           }
         }
-        
+
         // Remove stars that are off-screen
         if (star.x > window.innerWidth + 30) {
           star.element.remove();
@@ -302,59 +315,59 @@
         }
       }
     }
-    
+
     // Update player position
     function updatePlayerPosition() {
       player.style.top = `${playerY}%`;
     }
-    
+
     // Create cloud
     function createCloud() {
       if (isGameOver || isGameWon) return;
-      
+
       const cloud = document.createElement('div');
       cloud.className = 'cloud';
-      
+
       const width = Math.floor(Math.random() * 80) + 50;  // Smaller clouds
       const height = Math.floor(Math.random() * 40) + 25; // Smaller clouds
       const y = Math.floor(Math.random() * (window.innerHeight - height));
       const speed = Math.random() * 1.5 + 1.5;  // Slower clouds
-      
+
       cloud.style.width = `${width}px`;
       cloud.style.height = `${height}px`;
       cloud.style.top = `${y}px`;
       cloud.style.right = '-100px';
-      
+
       gameContainer.appendChild(cloud);
-      
+
       clouds.push({
         element: cloud,
-        x: -100,
+        x: 0,
         width: width,
         speed: speed
       });
     }
-    
+
     // Create star
     function createStar() {
       if (isGameOver || isGameWon) return;
-      
+
       const star = document.createElement('div');
       star.className = 'star';
-      
+
       // Create stars across the full width of the screen, not just at the edge
       const randomPosition = Math.random();
-      const x = randomPosition > 0.7 ? -30 : Math.random() * window.innerWidth; 
+      const x = randomPosition > 0.7 ? -30 : Math.random() * window.innerWidth;
       const y = Math.floor(Math.random() * (window.innerHeight - 40));
       const speed = Math.random() * 0.8 + 2;  // Slower stars, easier to collect
-      
+
       star.style.width = '45px';  // Even bigger stars
       star.style.height = '45px'; // Even bigger stars
       star.style.top = `${y}px`;
       star.style.right = `${-x}px`;
-      
+
       gameContainer.appendChild(star);
-      
+
       stars.push({
         element: star,
         x: x,
@@ -362,7 +375,7 @@
         collected: false
       });
     }
-    
+
     // Game over
     function gameOver() {
       isGameOver = true;
@@ -372,26 +385,26 @@
       finalScoreDisplay.textContent = score;
       gameOverScreen.style.display = 'block';
     }
-    
+
     // Win game
     function winGame() {
       isGameWon = true;
       clearInterval(gameLoop);
       clearInterval(cloudInterval);
       clearInterval(starInterval);
-      
+
       // Update win message with Theo's current age
       document.getElementById('win-message').textContent = `You are ${theosAge} today!`;
-      
+
       // Play celebration video
       const video = document.getElementById('celebration-video');
       video.src = 'theo.mp4';
       video.style.display = 'block';
       video.play();
-      
+
       winScreen.style.display = 'block';
     }
-    
+
     // Event listeners
     document.addEventListener('keydown', (e) => {
       if (e.code === 'Space') {
@@ -403,25 +416,26 @@
         e.preventDefault();
       }
     });
-    
+
     document.addEventListener('click', (e) => {
       // Don't trigger jump if clicking buttons
       if (e.target.tagName === 'BUTTON') return;
-      
+
       if (startScreen.style.display !== 'none') {
         startGameplay();
       } else if (!isGameOver && !isGameWon) {
         velocity = jump;
       }
     });
-    
+
     // Button event listeners
     restartButton.addEventListener('click', initGame);
     winRestartButton.addEventListener('click', initGame);
     startButton.addEventListener('click', startGameplay);
-    
+
     // Initialize game
     initGame();
   </script>
 </body>
+
 </html>
