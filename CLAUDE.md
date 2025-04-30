@@ -6,7 +6,7 @@ It is a site for my nephew Theo LLoyd who is sixteen years old.
 
 The site is a mini game.
 
-The mini game is a side scrolling game with a picture of Theo through
+The mini game is a side scrolling game with a picture of Theo flying through
 fairy floss clouds. If he hits the clouds the game ends. Theo can collect stars for points.
 If he gets to a 100 points, Theo wins the game and it says "Happy Birthday Theo."
 
